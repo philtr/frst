@@ -6,12 +6,12 @@ machine-specific stack files.
 
 ## 🔧 How It Works
 
-Each app (like Home Assistant or Frigate) defines its own docker compose config 
+Each app (like Home Assistant or Frigate) defines its own docker compose config
 inside `apps/`. A host-specific compose file (e.g., `docker-compose.grove.yml`)
 includes the relevant app services.
 
-App volumes should live under `volumes/APP_NAME/`. For example, if a
-container needs `/data`, mount it like this in the app’s compose file:
+App volumes should live under `volumes/APP_NAME/`. For example, if a container
+needs `/data`, mount it like this in the app’s compose file:
 
 ```yaml
 volumes:
