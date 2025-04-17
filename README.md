@@ -1,4 +1,4 @@
-# 🌲FRST
+# 🌲FRST: Forest Ranger's Stack Toolkit
 
 FRST is a minimal framework for managing docker-compose stacks per host or tag.
 It’s designed for self-hosted setups with modular app definitions and
