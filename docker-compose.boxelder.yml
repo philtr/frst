@@ -1,2 +1,3 @@
 include:
   - apps/actual-budget/docker-compose.yml
+  - apps/freshrss/docker-compose.yml
