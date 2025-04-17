@@ -9,6 +9,7 @@ services:
       - ./volumes/data:/var/www/FreshRSS/data
       - ./volumes/extensions:/var/www/FreshRSS/extensions
     environment:
+      CRON_MIN: "*/5"
       TZ: America/Chicago
     post_start:
       - command: chown apache:apache -R /var/www/FreshRSS
