@@ -1,22 +1,32 @@
 #!/bin/bash
 
-cmd=$1
-shift
+# usage: ./frst start [stack1 stack2 ...]
+# if no stacks are given, default to $(hostname)
 
-files=()
-for arg in "$@"; do
-  files+=("-f" "docker-compose.$arg.yml")
-done
+set -e
 
-case "$cmd" in
-  start)
-    docker compose "${files[@]}" up -d
-    ;;
-  stop)
-    docker compose "${files[@]}" down
-    ;;
-  *)
-    echo "usage: $0 {start|stop} <stack...>"
-    exit 1
-    ;;
-esac
+main() {
+  local cmd=$1; shift
+  local stacks=("$@")
+  [[ ${#stacks[@]} -eq 0 ]] && stacks=("$(hostname)")
+
+  local files=()
+  for stack in "${stacks[@]}"; do
+    files+=("-f" "docker-compose.${stack}.yml")
+  done
+
+  case "$cmd" in
+    start)
+      sudo docker compose "${files[@]}" up -d
+      ;;
+    stop)
+      sudo docker compose "${files[@]}" down
+      ;;
+    *)
+      echo "usage: $0 {start|stop} [stack...]" >&2
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
