@@ -1,4 +1,4 @@
 include:
-  - apps/actual-budget/docker-compose.yml
-  - apps/flaresolverr/docker-compose.yml
-  - apps/freshrss/docker-compose.yml
+  - apps/actual-budget.yml
+  - apps/flaresolverr.yml
+  - apps/freshrss.yml

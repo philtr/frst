@@ -10,8 +10,8 @@ services:
       - /dev/bus/usb:/dev/bus/usb # Passes the USB Coral, needs to be modified for other versions
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./volumes/config:/config
-      - ./volumes/media:/media/frigate
+      - ../volumes/config:/config
+      - ../volumes/media:/media/frigate
       - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
         target: /tmp/cache
         tmpfs:

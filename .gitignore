@@ -1,2 +1,2 @@
 secrets.env
-apps/*/volumes
+volumes/
