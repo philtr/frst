@@ -1,0 +1,13 @@
+services:
+  freshrss:
+    image: freshrss/freshrss:alpine
+    container_name: freshrss
+    restart: unless-stopped
+    ports:
+      - 8086:80
+    volumes:
+      - ./volumes/data:/var/www/FreshRSS/data
+      - ./volumes/extensions:/var/www/FreshRSS/extensions
+    environment:
+      TZ: America/Chicago
+
