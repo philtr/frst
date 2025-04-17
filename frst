@@ -1,32 +1,45 @@
 #!/bin/bash
 
-# usage: ./frst start [stack1 stack2 ...]
-# if no stacks are given, default to $(hostname)
+cmd=$1
+shift
 
-set -e
+# default stack is the hostname
+stack="$(hostname)"
 
-main() {
-  local cmd=$1; shift
-  local stacks=("$@")
-  [[ ${#stacks[@]} -eq 0 ]] && stacks=("$(hostname)")
-
-  local files=()
-  for stack in "${stacks[@]}"; do
-    files+=("-f" "docker-compose.${stack}.yml")
-  done
-
-  case "$cmd" in
-    start)
-      sudo docker compose "${files[@]}" up -d
-      ;;
-    stop)
-      sudo docker compose "${files[@]}" down
+# parse options
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -s|--stack)
+      stack="$2"
+      shift 2
       ;;
     *)
-      echo "usage: $0 {start|stop} [stack...]" >&2
-      exit 1
+      break
       ;;
   esac
-}
+done
 
-main "$@"
+# remaining args are treated as service names
+services=("$@")
+
+compose_file="-f docker-compose.$stack.yml"
+
+case "$cmd" in
+  start)
+    echo "🌲 FRST: starting stack '$stack' with services: ${services[*]:-(all)}"
+    sudo docker compose $compose_file up -d "${services[@]}"
+    ;;
+  stop)
+    echo "🌲 FRST: stopping stack '$stack' with services: ${services[*]:-(all)}"
+    sudo docker compose $compose_file down "${services[@]}"
+    ;;
+  restart)
+    echo "🌲 FRST: restarting stack '$stack' with services: ${services[*]:-(all)}"
+    sudo docker compose $compose_file down "${services[@]}"
+    sudo docker compose $compose_file up -d "${services[@]}"
+    ;;
+  *)
+    echo "usage: $0 {start|stop|restart} [-s|--stack <stack>] [services...]" >&2
+    exit 1
+    ;;
+esac

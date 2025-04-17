@@ -29,29 +29,38 @@ chmod +x frst
 ### Start services
 
 ```sh
-./frst start grove
+./frst start -s grove home-assistant frigate
 ```
 
 ### Stop services
 
 ```sh
-./frst stop grove
+./frst stop -s grove home-assistant frigate
 ```
 
-### Default to hostname
+### Restart services
 
-If no stack name is provided, FRST uses the system’s hostname:
+```sh
+./frst restart -s grove home-assistant frigate
+```
+
+### Use system hostname as stack name
+
+If no `-s`/`--stack` option is provided, FRST uses the system’s hostname:
 
 ```sh
 ./frst start
 ./frst stop
+./frst restart
 ```
 
 This runs:
 
 ```sh
-docker compose -f docker-compose.$(hostname).yml up -d
+sudo docker compose -f docker-compose.$(hostname).yml up -d
 ```
+
+Arguments after the command are passed to `docker compose` as service names.
 
 ## 🔐 Secrets
 
