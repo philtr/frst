@@ -1,2 +1,2 @@
-grove.env
-apps/*
+secrets.env
+apps/*/volumes

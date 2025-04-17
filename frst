@@ -1,0 +1,22 @@
+#!/bin/bash
+
+cmd=$1
+shift
+
+files=()
+for arg in "$@"; do
+  files+=("-f" "docker-compose.$arg.yml")
+done
+
+case "$cmd" in
+  start)
+    docker compose "${files[@]}" up -d
+    ;;
+  stop)
+    docker compose "${files[@]}" down
+    ;;
+  *)
+    echo "usage: $0 {start|stop} <stack...>"
+    exit 1
+    ;;
+esac

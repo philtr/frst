@@ -10,8 +10,8 @@ services:
       - /dev/bus/usb:/dev/bus/usb # Passes the USB Coral, needs to be modified for other versions
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./apps/frigate/config:/config
-      - ./apps/frigate/media:/media/frigate
+      - ./volumes/config:/config
+      - ./volumes/media:/media/frigate
       - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
         target: /tmp/cache
         tmpfs:
@@ -23,20 +23,5 @@ services:
       - "8555:8555/tcp" # WebRTC over tcp
       - "8555:8555/udp" # WebRTC over udp
     env_file:
-      - path: ./grove.env
+      - path: ../../secrets.env
         required: true
-
-  home-assistant:
-    container_name: home-assistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
-    volumes:
-      - ./apps/home-assistant/config:/config
-      - /etc/localtime:/etc/localtime:ro
-      - /run/dbus:/run/dbus:ro
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-    env_file:
-      - path: /grove.env
-        required: false
-  
