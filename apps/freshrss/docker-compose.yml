@@ -10,3 +10,6 @@ services:
       - ./volumes/extensions:/var/www/FreshRSS/extensions
     environment:
       TZ: America/Chicago
+    post_start:
+      - command: chown apache:apache -R /var/www/FreshRSS
+        user: root
