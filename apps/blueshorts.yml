@@ -1,0 +1,10 @@
+services:
+  blueshorts:
+    image: ghcr.io/philtr/blueshorts:edge
+    container_name: blueshorts
+    restart: unless-stopped
+    ports:
+      - 8585:8080
+    volumes:
+      - ../volumes/blueshorts/data:/data
+
