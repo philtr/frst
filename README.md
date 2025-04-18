@@ -44,6 +44,12 @@ chmod +x frst
 ./frst restart -s grove home-assistant frigate
 ```
 
+### Update images
+
+```sh
+./frst pull -s grove home-assistant frigate
+```
+
 ### Use system hostname as stack name
 
 If no `-s`/`--stack` option is provided, FRST uses the system’s hostname:
@@ -52,6 +58,7 @@ If no `-s`/`--stack` option is provided, FRST uses the system’s hostname:
 ./frst start
 ./frst stop
 ./frst restart
+./frst pull
 ```
 
 This runs:
