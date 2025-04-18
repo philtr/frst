@@ -9,7 +9,7 @@ stack="$(hostname)"
 # parse options
 while [[ $# -gt 0 ]]; do
 	case "$1" in
-	-s | --stack)
+	-s|--stack)
 		stack="$2"
 		shift 2
 		;;
@@ -22,25 +22,26 @@ done
 # remaining args are treated as service names
 services=("$@")
 
-compose_file="-f docker-compose.$stack.yml"
+# compose file args
+compose_args=(-f "docker-compose.$stack.yml")
 
 case "$cmd" in
 start)
 	echo "🌲 frst: starting stack '$stack' with services: ${services[*]:-(all)}"
-	sudo docker compose "$compose_file" up -d "${services[@]}"
+	sudo docker compose "${compose_args[@]}" up -d "${services[@]}"
 	;;
 stop)
 	echo "🌲 frst: stopping stack '$stack' with services: ${services[*]:-(all)}"
-	sudo docker compose "$compose_file" down "${services[@]}"
+	sudo docker compose "${compose_args[@]}" down "${services[@]}"
 	;;
 restart)
 	echo "🌲 frst: restarting stack '$stack' with services: ${services[*]:-(all)}"
-	sudo docker compose "$compose_file" down "${services[@]}"
-	sudo docker compose "$compose_file" up -d "${services[@]}"
+	sudo docker compose "${compose_args[@]}" down "${services[@]}"
+	sudo docker compose "${compose_args[@]}" up -d "${services[@]}"
 	;;
 pull)
 	echo "🌲 frst: pulling images for stack '$stack' with services: ${services[*]:-(all)}"
-	sudo docker compose "$compose_file" pull "${services[@]}"
+	sudo docker compose "${compose_args[@]}" pull "${services[@]}"
 	;;
 *)
 	echo "usage: $0 {start|stop|restart|pull} [-s|--stack <stack>] [services...]" >&2
