@@ -6,5 +6,7 @@ services:
     ports:
       - 8585:8080
     volumes:
-      - ../volumes/blueshorts/data:/data
+      - ../volumes/blueshorts/config:/config
+    environment:
+      BLUESHORTS_CONFIG: /config/config.toml
 
