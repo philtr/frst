@@ -3,3 +3,4 @@ include:
   - apps/blueshorts.yml
   - apps/flaresolverr.yml
   - apps/freshrss.yml
+  - apps/linkding.yml
