@@ -5,3 +5,4 @@ include:
   - apps/freshrss.yml
   - apps/home-assistant.yml
   - apps/linkding.yml
+  - apps/navidrome.yml
