@@ -1,3 +1,2 @@
 include:
   - apps/frigate.yml
-  - apps/home-assistant.yml
