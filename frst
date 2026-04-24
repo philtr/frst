@@ -163,6 +163,34 @@ backup() {
 	trap - EXIT
 }
 
+backup_local_overrides() {
+	local backup_dir="backups"
+	local recent ts host archive
+	local override_files=()
+
+	if [[ -f "docker-compose.local.yml" ]]; then
+		override_files+=("docker-compose.local.yml")
+	fi
+
+	shopt -s nullglob
+	override_files+=(docker-compose.*.local.yml)
+	shopt -u nullglob
+
+	[[ ${#override_files[@]} -gt 0 ]] || return 0
+
+	mkdir -p "$backup_dir"
+
+	recent="$(find "$backup_dir" -maxdepth 1 -type f -name "local-overrides-*.tar.gz" -mmin -60 -print -quit)"
+	[[ -z "$recent" ]] || return 0
+
+	ts="$(date +"%Y%m%d%H%M%S")"
+	host="$(hostname)"
+	archive="$backup_dir/local-overrides-${host}-${ts}.tar.gz"
+
+	tar -czf "$archive" "${override_files[@]}"
+	echo "🌲 frst: backed up local overrides to $archive"
+}
+
 case "$cmd" in
 	help|-h|--help)
 		usage
@@ -171,6 +199,7 @@ case "$cmd" in
 esac
 
 parse_args "$@"
+backup_local_overrides
 
 case "$cmd" in
 	help|-h|--help)
