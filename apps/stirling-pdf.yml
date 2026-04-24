@@ -1,0 +1,22 @@
+services:
+  stirling-pdf:
+    container_name: stirling-pdf
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+    ports:
+      - '8042:8080'
+    volumes:
+      - ../volumes/stirling-pdf/data/tessdata:/usr/share/tessdata # Required for extra OCR languages
+      - ../volumes/stirling-pdf/data/configs:/configs
+      - ../volumes/stirling-pdf/customFiles:/customFiles/
+      - ../volumes/stirling-pdf/logs:/logs/
+      - ../volumes/stirling-pdf/pipeline:/pipeline/
+    environment:
+      - DISABLE_ADDITIONAL_FEATURES=false
+      - LANGS=en_US
+      # configuration options
+      - SECURITY_ENABLELOGIN=true
+      - SECURITY_LOGINMETHOD=oauth2
+      - SECURITY_OAUTH2_ENABLED=true
+      - SECURITY_OAUTH2_PROVIDER=github
+      - SECURITY_OAUTH2_SCOPES="read:user"
+      - SECURITY_OAUTH2_USEASUSERNAME=email

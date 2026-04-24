@@ -9,7 +9,4 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
-    env_file:
-      - path: ../secrets.env
-        required: false
   

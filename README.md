@@ -71,18 +71,24 @@ Arguments after the command are passed to `docker compose` as service names.
 
 ## 🔐 Secrets
 
-Copy the example env file and populate it with real values:
+Put local-only secrets in an untracked compose override:
 
 ```sh
-cp secrets.env.example secrets.env
+cp docker-compose.local.example.yml docker-compose.local.yml
 ```
 
-Then reference it in your service definitions like so:
+Copy only the service blocks you need from the example into that local
+override, for example:
 
 ```yaml
-env_file:
-  - ../../secrets.env
+services:
+  wallabag:
+    environment:
+      MYSQL_ROOT_PASSWORD: your-real-password
 ```
+
+`frst` will automatically include `docker-compose.local.yml` and
+`docker-compose.$(hostname).local.yml` when present.
 
 ## 🧠 Philosophy
 

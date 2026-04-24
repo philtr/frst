@@ -1,0 +1,23 @@
+services:
+  n8n:
+    container_name: n8n
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    ports:
+      - "45678:5678"
+    environment:
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_HOST=n8n.willow.network
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_RUNNERS_ENABLED=true
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://n8n.willow.network/
+      - GENERIC_TIMEZONE=America/Chicago
+      - TZ=America/Chicago
+    volumes:
+      - n8n-data:/home/node/.n8n
+      - ../volumes/n8n/files:/files
+
+volumes:
+  n8n-data:

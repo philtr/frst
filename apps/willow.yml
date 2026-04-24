@@ -1,0 +1,10 @@
+services:
+  willow:
+    container_name: willow
+    image: nginx:alpine
+    ports:
+      - "8676:80"
+    volumes:
+      - ../volumes/willow/html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+

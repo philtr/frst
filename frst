@@ -25,6 +25,14 @@ services=("$@")
 # compose file args
 compose_args=(-f "docker-compose.$stack.yml")
 
+if [[ -f "docker-compose.local.yml" ]]; then
+	compose_args+=(-f "docker-compose.local.yml")
+fi
+
+if [[ -f "docker-compose.$stack.local.yml" ]]; then
+	compose_args+=(-f "docker-compose.$stack.local.yml")
+fi
+
 case "$cmd" in
 	start)
 		echo "🌲 frst: starting stack '$stack' with services: ${services[*]:-(all)}"

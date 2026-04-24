@@ -1,0 +1,13 @@
+services:
+  convergence:
+    container_name: convergence
+    image: ghcr.io/philtr/convergence:latest
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: "4000"
+      CHECK_ORIGINS: "https://deck.fitness,https://sync.deck.fitness"
+      CORS_ORIGINS: "https://deck.fitness,https://deploy-preview-15--deckofgains.netlify.app"
+      ROOM_TTL_SECONDS: "86400"
+      MAX_STATE_BYTES: "32768"
+    restart: unless-stopped

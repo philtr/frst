@@ -1,0 +1,25 @@
+services:
+  miniminutes:
+    container_name: miniminutes 
+    image: ghcr.io/philtr/miniminutes:latest
+    restart: unless-stopped
+    ports:
+      - 8617:3000
+    environment:
+      DATABASE_URL: "sqlite3:/rails/storage/production.sqlite3"
+      MAILER_HOST: "minutes.burlesonbiblechurch.org"
+      MAILER_FROM: "MiniMinutes <no-reply@mail.philtr.dev>"
+      RAILS_ENV: "production"
+      RAILS_LOG_LEVEL: "info"
+      REGISTRATION_ENABLED: "false"
+      WEBAUTHN_ORIGIN: "https://minutes.burlesonbiblechurch.org"
+      WEBAUTHN_RP_ID: "minutes.burlesonbiblechurch.org"
+      WEBAUTHN_RP_NAME: "BBC MiniMinutes"
+    volumes:
+      - ../volumes/miniminutes/storage:/rails/storage
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/up || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s

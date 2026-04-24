@@ -1,0 +1,12 @@
+services:
+  badpw:
+    image: ghcr.io/philtr/bad-passwords:latest
+    container_name: badpw
+    restart: unless-stopped
+    ports:
+      - "3911:80"
+    environment:
+      HOST: "https://pw.ptx.sh"
+      JWT_ISSUER: "https://pw.ptx.sh"
+    volumes:
+      - ../volumes/badpw/storage:/rails/storage

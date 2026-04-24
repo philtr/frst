@@ -1,0 +1,62 @@
+services: {}
+
+# Copy only the service blocks you need into docker-compose.local.yml or
+# docker-compose.<stack>.local.yml.
+#
+# Example overrides:
+#
+# services:
+#   badpw:
+#     environment:
+#       SECRET_KEY_BASE: replace_me
+#       JWT_PRIVATE_KEY: |
+#         -----BEGIN RSA PRIVATE KEY-----
+#         replace_me
+#         -----END RSA PRIVATE KEY-----
+#       JWT_PUBLIC_KEY: |
+#         -----BEGIN PUBLIC KEY-----
+#         replace_me
+#         -----END PUBLIC KEY-----
+#
+#   convergence:
+#     environment:
+#       SECRET_KEY_BASE: replace_me
+#
+#   frigate:
+#     environment:
+#       FRIGATE_RTSP_USER: replace_me
+#       FRIGATE_RTSP_PASS: replace_me
+#
+#   miniminutes:
+#     environment:
+#       RESEND_API_KEY: replace_me
+#       SECRET_KEY_BASE: replace_me
+#
+#   photo-booth:
+#     environment:
+#       RESEND_API_KEY: replace_me
+#       SECRET_KEY_BASE: replace_me
+#
+#   stirling-pdf:
+#     environment:
+#       SECURITY_OAUTH2_CLIENT_GITHUB_CLIENTID: replace_me
+#       SECURITY_OAUTH2_CLIENT_GITHUB_CLIENTSECRET: replace_me
+#
+#   umami-app:
+#     environment:
+#       DATABASE_URL: postgresql://umami:replace_me@umami-db:5432/umami
+#       APP_SECRET: replace_me
+#
+#   umami-db:
+#     environment:
+#       POSTGRES_PASSWORD: replace_me
+#
+#   wallabag:
+#     environment:
+#       MYSQL_ROOT_PASSWORD: replace_me
+#       SYMFONY__ENV__DATABASE_PASSWORD: replace_me
+#       SYMFONY__ENV__MAILER_DSN: smtp://user:password@mail.example.com:587
+#
+#   db:
+#     environment:
+#       MYSQL_ROOT_PASSWORD: replace_me

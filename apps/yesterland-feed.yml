@@ -1,0 +1,13 @@
+services:
+  yesterland-feed:
+    container_name: yesterland-feed
+    image: ruby:latest
+    working_dir: /app
+    volumes:
+      - ../volumes/yesterland-feed/app:/app:ro
+      - ../volumes/yesterland-feed/bundle:/usr/local/bundle
+    command: ["bin/yesterland_feed"]
+    restart: unless-stopped
+    ports:
+      - "8567:4567"
+

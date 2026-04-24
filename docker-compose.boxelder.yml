@@ -1,8 +1,19 @@
 include:
   - apps/actual-budget.yml
+  - apps/convergence.yml
+  - apps/badpw.yml
   - apps/blueshorts.yml
+  - apps/dozzle.yml
   - apps/flaresolverr.yml
   - apps/freshrss.yml
   - apps/home-assistant.yml
+  - apps/homepage.yml
   - apps/linkding.yml
+  - apps/miniminutes.yml
+  - apps/n8n.yml
   - apps/navidrome.yml
+  - apps/photo-booth.yml
+  - apps/umami.yml
+  - apps/wallabag.yml
+  - apps/willow.yml
+  - apps/yesterland-feed.yml
