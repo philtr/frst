@@ -50,6 +50,24 @@ chmod +x frst
 ./frst pull -s grove home-assistant frigate
 ```
 
+### Inspect stack files
+
+```sh
+./frst files -s grove
+```
+
+### Show service status
+
+```sh
+./frst status -s grove
+```
+
+### Show logs
+
+```sh
+./frst logs -s grove --tail 50 home-assistant
+```
+
 ### Use system hostname as stack name
 
 If no `-s`/`--stack` option is provided, FRST uses the system’s hostname:
@@ -64,10 +82,20 @@ If no `-s`/`--stack` option is provided, FRST uses the system’s hostname:
 This runs:
 
 ```sh
-sudo docker compose -f docker-compose.$(hostname).yml up -d
+docker compose -f docker-compose.$(hostname).yml up -d
 ```
 
 Arguments after the command are passed to `docker compose` as service names.
+
+If Docker is not accessible to your user, add your user to the Docker group:
+
+```sh
+sudo usermod -aG docker "$(id -un)"
+newgrp docker
+docker ps
+```
+
+Docker group access is root-equivalent, so only grant it to trusted users.
 
 ## 🔐 Secrets
 

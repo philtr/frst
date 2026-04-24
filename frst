@@ -1,73 +1,230 @@
 #!/bin/bash
+set -euo pipefail
 
-cmd=$1
-shift
-
-# default stack is the hostname
+program="$(basename "$0")"
+cmd="${1:-help}"
 stack="$(hostname)"
+services=()
+compose_args=()
+compose_files=()
 
-# parse options
-while [[ $# -gt 0 ]]; do
-	case "$1" in
-		-s|--stack)
-			stack="$2"
-			shift 2
-			;;
-		*)
-			break
-			;;
-	esac
-done
+usage() {
+	cat <<EOF
+🌲 FRST: Forest Ranger's Stack Toolkit
 
-# remaining args are treated as service names
-services=("$@")
+Usage:
+  $program <command> [-s|--stack <stack>] [services...]
+  $program help
 
-# compose file args
-compose_args=(-f "docker-compose.$stack.yml")
+Commands:
+  start      Start the stack or selected services
+  stop       Stop the stack or selected services
+  restart    Restart the stack or selected services
+  pull       Pull images for the stack or selected services
+  status     Show compose service status
+  logs       Show compose logs for the stack or selected services
+  files      Print the compose files FRST will use
+  backup     Zip ./volumes and rsync it to a destination
+  help       Show this help
 
-if [[ -f "docker-compose.local.yml" ]]; then
-	compose_args+=(-f "docker-compose.local.yml")
-fi
+Examples:
+  $program start -s grove home-assistant frigate
+  $program status
+  $program logs --tail 50 linkding
+  $program files -s boxelder
+  $program backup user@example.com:/backups
 
-if [[ -f "docker-compose.$stack.local.yml" ]]; then
-	compose_args+=(-f "docker-compose.$stack.local.yml")
-fi
+If no stack is provided, FRST uses the current hostname: $stack
+EOF
+}
+
+die() {
+	echo "🌲 frst: error: $*" >&2
+	exit 1
+}
+
+service_label() {
+	if [[ ${#services[@]} -eq 0 ]]; then
+		echo "(all)"
+	else
+		printf "%s " "${services[@]}"
+	fi
+}
+
+print_docker_access_help() {
+	local user
+	user="$(id -un)"
+
+	cat >&2 <<EOF
+
+🌲 frst: Docker is not accessible for user '$user'.
+
+To allow this user to manage Docker without sudo:
+  sudo usermod -aG docker $user
+  newgrp docker
+
+Then verify:
+  docker ps
+
+Note: docker group access is root-equivalent.
+EOF
+}
+
+check_docker_access() {
+	local output
+
+	if output="$(docker info 2>&1 >/dev/null)"; then
+		return 0
+	fi
+
+	if [[ -n "$output" ]]; then
+		echo "🌲 frst: docker said:" >&2
+		echo "$output" >&2
+	fi
+
+	print_docker_access_help
+	exit 1
+}
+
+build_compose_args() {
+	local stack_file="docker-compose.$stack.yml"
+
+	[[ -f "$stack_file" ]] || die "stack '$stack' not found; expected $stack_file"
+
+	compose_files=("$stack_file")
+	compose_args=(-f "$stack_file")
+
+	if [[ -f "docker-compose.local.yml" ]]; then
+		compose_files+=("docker-compose.local.yml")
+		compose_args+=(-f "docker-compose.local.yml")
+	fi
+
+	if [[ -f "docker-compose.$stack.local.yml" ]]; then
+		compose_files+=("docker-compose.$stack.local.yml")
+		compose_args+=(-f "docker-compose.$stack.local.yml")
+	fi
+}
+
+compose() {
+	docker compose "${compose_args[@]}" "$@"
+}
+
+print_context() {
+	local action="$1"
+
+	echo "🌲 frst: $action"
+	echo "  stack:    $stack"
+	echo "  services: $(service_label)"
+	echo "  files:    ${compose_files[*]}"
+}
+
+parse_args() {
+	shift || true
+
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+			-s|--stack)
+				[[ $# -ge 2 ]] || die "$1 requires a stack name"
+				stack="$2"
+				shift 2
+				;;
+			-h|--help)
+				cmd="help"
+				shift
+				;;
+			*)
+				services+=("$1")
+				shift
+				;;
+		esac
+	done
+}
+
+backup() {
+	local dest="${services[0]:-}"
+	local ts host filename
+
+	[[ -n "$dest" ]] || die "no rsync destination provided for backup; usage: $program backup <rsync destination>"
+	[[ -d "volumes" ]] || die "volumes directory not found"
+
+	ts="$(date +"%Y%m%d%H%M%S")"
+	host="$(hostname)"
+	filename="frst-${host}-${ts}.zip"
+
+	trap 'rm -f "$filename"' EXIT
+
+	echo "🌲 frst: backing up volumes"
+	echo "  archive:  $filename"
+	echo "  dest:     $dest/🌲FRST"
+
+	zip -r "$filename" ./volumes
+	rsync -av "$filename" "$dest/🌲FRST"
+	rm -f "$filename"
+	trap - EXIT
+}
 
 case "$cmd" in
+	help|-h|--help)
+		usage
+		exit 0
+		;;
+esac
+
+parse_args "$@"
+
+case "$cmd" in
+	help|-h|--help)
+		usage
+		exit 0
+		;;
 	start)
-		echo "🌲 frst: starting stack '$stack' with services: ${services[*]:-(all)}"
-		sudo docker compose "${compose_args[@]}" up -d "${services[@]}"
+		build_compose_args
+		check_docker_access
+		print_context "starting"
+		compose up -d "${services[@]}"
 		;;
 	stop)
-		echo "🌲 frst: stopping stack '$stack' with services: ${services[*]:-(all)}"
-		sudo docker compose "${compose_args[@]}" down "${services[@]}"
+		build_compose_args
+		check_docker_access
+		print_context "stopping"
+		compose down "${services[@]}"
 		;;
 	restart)
-		echo "🌲 frst: restarting stack '$stack' with services: ${services[*]:-(all)}"
-		sudo docker compose "${compose_args[@]}" down "${services[@]}"
-		sudo docker compose "${compose_args[@]}" up -d "${services[@]}"
+		build_compose_args
+		check_docker_access
+		print_context "restarting"
+		compose down "${services[@]}"
+		compose up -d "${services[@]}"
 		;;
 	pull)
-		echo "🌲 frst: pulling images for stack '$stack' with services: ${services[*]:-(all)}"
-		sudo docker compose "${compose_args[@]}" pull "${services[@]}"
+		build_compose_args
+		check_docker_access
+		print_context "pulling images"
+		compose pull "${services[@]}"
+		;;
+	status)
+		build_compose_args
+		check_docker_access
+		print_context "showing status"
+		compose ps "${services[@]}"
+		;;
+	logs)
+		build_compose_args
+		check_docker_access
+		print_context "showing logs"
+		compose logs "${services[@]}"
+		;;
+	files)
+		build_compose_args
+		printf "%s\n" "${compose_files[@]}"
 		;;
 	backup)
-		dest="${services[0]}"
-		if [[ -z "$dest" ]]; then
-			echo "🌲 frst: error: no rsync destination provided for backup" >&2
-			echo "usage: $0 backup <rsync destination>" >&2
-			exit 1
-		fi
-		echo "🌲 frst: backing up volumes to $dest"
-		ts=$(date +"%Y%m%d%H%M%S")
-		host=$(hostname)
-		filename="frst-${host}-${ts}.zip"
-		zip -r "$filename" ./volumes/*
-		rsync -av "$filename" "$dest/🌲FRST"
-		rm "$filename"
+		backup
 		;;
 	*)
-		echo "usage: $0 {start|stop|restart|pull} [-s|--stack <stack>] [services...]" >&2
+		echo "🌲 frst: unknown command '$cmd'" >&2
+		echo >&2
+		usage >&2
 		exit 1
 		;;
 esac
