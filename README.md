@@ -18,6 +18,22 @@ volumes:
   - ../volumes/APP_NAME/data:/data
 ```
 
+Because app files are loaded from `apps/`, bind mounts in those files should
+use `../volumes/...`. Host-specific compose files at the repo root can use
+paths relative to the repo root.
+
+Prefer Compose exec/list form for container commands, especially when arguments
+contain shell metacharacters like parentheses:
+
+```yaml
+command:
+  - -vf
+  - scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2
+```
+
+Use `sh -c` only when the command intentionally needs shell behavior such as
+`&&`, pipes, redirects, or variable expansion.
+
 ## 🚀 Usage
 
 Make the script executable:
@@ -55,6 +71,16 @@ chmod +x frst
 ```sh
 ./frst files -s grove
 ```
+
+### Validate compose config
+
+```sh
+docker compose -f docker-compose.grove.yml config --quiet
+docker compose -f docker-compose.boxelder.yml config --quiet
+```
+
+Run this after editing app or stack files. It catches YAML and Compose schema
+issues without starting containers.
 
 ### Show service status
 
