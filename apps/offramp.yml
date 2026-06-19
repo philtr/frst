@@ -1,0 +1,22 @@
+services:
+  offramp:
+    container_name: offramp
+    image: ghcr.io/philtr/offramp:latest
+    restart: unless-stopped
+    ports:
+      - "8878:80"
+    environment:
+      APP_HOST: "offramp.philtr.dev"
+      DATABASE_URL: "sqlite3:/rails/storage/production.sqlite3"
+      MAIL_FROM: "Offramp <offramp@mail.philtr.dev>"
+      RAILS_ENV: "production"
+      RAILS_LOG_LEVEL: "info"
+      SOLID_QUEUE_IN_PUMA: "true"
+    volumes:
+      - ../volumes/offramp/storage:/rails/storage
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1/up || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s

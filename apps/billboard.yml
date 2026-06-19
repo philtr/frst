@@ -1,0 +1,53 @@
+services:
+  billboard-stream:
+    image: linuxserver/ffmpeg:latest
+    volumes:
+      - ../volumes/billboard/media:/media:ro
+      - ../volumes/billboard/hls:/hls
+    command:
+      - -loop
+      - "1"
+      - -re
+      - -framerate
+      - "30"
+      - -i
+      - /media/current.png
+      - -f
+      - lavfi
+      - -i
+      - anullsrc=channel_layout=stereo:sample_rate=48000
+      - -vf
+      - scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2
+      - -c:v
+      - libx264
+      - -preset
+      - veryfast
+      - -tune
+      - stillimage
+      - -pix_fmt
+      - yuv420p
+      - -r
+      - "30"
+      - -g
+      - "60"
+      - -c:a
+      - aac
+      - -b:a
+      - 128k
+      - -f
+      - hls
+      - -hls_time
+      - "2"
+      - -hls_list_size
+      - "6"
+      - -hls_flags
+      - delete_segments
+      - /hls/stream.m3u8
+
+  billboard-web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ../volumes/billboard/hls:/usr/share/nginx/html/live:ro
+      - ../volumes/billboard/playlist.m3u:/usr/share/nginx/html/playlist.m3u:ro

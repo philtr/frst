@@ -9,4 +9,22 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
-  
+
+  # home-assistant-mcp:
+  #   container_name: home-assistant-mcp
+  #   image: ghcr.io/homeassistant-ai/ha-mcp:latest
+  #   command: ha-mcp-web
+  #   ports:
+  #     - "8686:8086"
+  #   restart: unless-stopped
+  #   read_only: true
+  #   tmpfs:
+  #     - /tmp
+  #   cap_drop:
+  #     - ALL
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M

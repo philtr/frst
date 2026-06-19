@@ -37,6 +37,40 @@ services: {}
 #       RESEND_API_KEY: replace_me
 #       SECRET_KEY_BASE: replace_me
 #
+#   offramp:
+#     environment:
+#       SECRET_KEY_BASE: replace_me
+#       RESEND_API_KEY: replace_me
+#       CONTACT_NOTIFICATION_EMAIL: replace_me
+#       MAIL_FROM: Offramp <offramp@mail.philtr.dev>
+#       UMAMI_SCRIPT_URL: https://analytics.example.com/script.js
+#       UMAMI_WEBSITE_ID: replace_me
+#
+#   prosody:
+#     environment:
+#       PROSODY_VIRTUAL_HOSTS: willow.network
+#       PROSODY_ADMINS: philtr@willow.network
+#       PROSODY_COMPONENTS: conference.willow.network:muc,upload.willow.network:http_file_share
+#       PROSODY_NETWORK_HOSTNAME: upload.willow.network
+#       PROSODY_HTTP_EXTERNAL_URL: https://upload.willow.network/
+#       PROSODY_TRUSTED_PROXIES: 192.168.1.10
+#       PROSODY_EXTERNAL_ADDRESSES: 107.136.40.169
+#       LOCAL: philtr
+#       DOMAIN: willow.network
+#       PASSWORD: replace_me
+#
+#   prosody-certs:
+#     environment:
+#       LEGO_EMAIL: admin@example.com
+#       NAMECHEAP_API_USER: replace_me
+#       NAMECHEAP_API_KEY: replace_me
+#
+#   prosody-certs-renew:
+#     environment:
+#       LEGO_EMAIL: admin@example.com
+#       NAMECHEAP_API_USER: replace_me
+#       NAMECHEAP_API_KEY: replace_me
+#
 #   stirling-pdf:
 #     environment:
 #       SECURITY_OAUTH2_CLIENT_GITHUB_CLIENTID: replace_me

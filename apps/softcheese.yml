@@ -1,0 +1,10 @@
+services:
+  softcheese:
+    container_name: softcheese
+    image: nginx:alpine
+    ports:
+      - "8677:80"
+    volumes:
+      - ../volumes/softcheese/html:/usr/share/nginx/html:ro
+    restart: unless-stopped
+

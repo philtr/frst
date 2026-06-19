@@ -2,17 +2,22 @@ include:
   - apps/actual-budget.yml
   - apps/convergence.yml
   - apps/badpw.yml
+  # - apps/billboard.yml
   - apps/blueshorts.yml
-  - apps/dozzle.yml
+  # - apps/dozzle.yml
   - apps/flaresolverr.yml
   - apps/freshrss.yml
   - apps/home-assistant.yml
-  - apps/homepage.yml
+  # - apps/homepage.yml
   - apps/linkding.yml
   - apps/miniminutes.yml
-  - apps/n8n.yml
+  # - apps/n8n.yml
   - apps/navidrome.yml
+  - apps/offramp.yml
   - apps/photo-booth.yml
+  # - apps/prosody.yml
+  - apps/softcheese-2.yml
+  - apps/softcheese.yml
   - apps/umami.yml
   - apps/wallabag.yml
   - apps/willow.yml

@@ -1,0 +1,17 @@
+services:
+  softcheese-2:
+    container_name: softcheese-2
+    image: ruby:latest
+    working_dir: /app
+    environment:
+      BUNDLE_FROZEN: "true"
+    volumes:
+      - ../volumes/softcheese.net:/app:ro
+      - ../volumes/softcheese-2/bundle:/usr/local/bundle
+    command:
+      - sh
+      - -c
+      - bundle check || bundle install && exec bundle exec rackup --host 0.0.0.0 --port 9292
+    restart: unless-stopped
+    ports:
+      - "8678:9292"
