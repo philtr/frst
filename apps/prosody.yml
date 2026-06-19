@@ -1,0 +1,84 @@
+services:
+  prosody:
+    image: prosodyim/prosody:13.0
+    container_name: prosody
+    restart: unless-stopped
+    ports:
+      - "5222:5222" # client-to-server
+      - "5269:5269" # server-to-server federation
+      - "5280:5280" # HTTP, BOSH, websocket
+      - "5281:5281" # HTTPS, BOSH, websocket, file upload
+    volumes:
+      - ../volumes/prosody/data:/var/lib/prosody
+      - ../volumes/prosody/certs:/etc/prosody/certs:ro
+      - ../volumes/prosody/config/http.cfg.lua:/etc/prosody/conf.d/http.cfg.lua:ro
+      - ../volumes/prosody/config/certificates.cfg.lua:/etc/prosody/conf.d/certificates.cfg.lua:ro
+    environment:
+      PROSODY_VIRTUAL_HOSTS: ${PROSODY_VIRTUAL_HOSTS:-willow.network}
+      PROSODY_ADMINS: ${PROSODY_ADMINS:-philtr@willow.network}
+      PROSODY_COMPONENTS: ${PROSODY_COMPONENTS:-conference.willow.network:muc,upload.willow.network:http_file_share}
+      PROSODY_NETWORK_HOSTNAME: ${PROSODY_NETWORK_HOSTNAME:-upload.willow.network}
+      PROSODY_HTTP_EXTERNAL_URL: ${PROSODY_HTTP_EXTERNAL_URL:-https://upload.willow.network/}
+      PROSODY_TRUSTED_PROXIES: ${PROSODY_TRUSTED_PROXIES:-192.168.1.228}
+      PROSODY_EXTERNAL_ADDRESSES: ${PROSODY_EXTERNAL_ADDRESSES:-107.136.40.169}
+      PROSODY_MUC_MODULES: ${PROSODY_MUC_MODULES:-muc_mam}
+      PROSODY_RETENTION_DAYS: ${PROSODY_RETENTION_DAYS:-30}
+      PROSODY_UPLOAD_LIMIT_MB: ${PROSODY_UPLOAD_LIMIT_MB:-50}
+      PROSODY_UPLOAD_STORAGE_GB: ${PROSODY_UPLOAD_STORAGE_GB:-5}
+      PROSODY_LOGLEVEL: ${PROSODY_LOGLEVEL:-info}
+
+  prosody-certs:
+    image: goacme/lego:v4.34.0
+    container_name: prosody-certs
+    profiles:
+      - certs
+    volumes:
+      - ../volumes/prosody/certs:/lego
+    environment:
+      LEGO_EMAIL: ${LEGO_EMAIL:-philtr@willow.network}
+      NAMECHEAP_API_USER: ${NAMECHEAP_API_USER:-}
+      NAMECHEAP_API_KEY: ${NAMECHEAP_API_KEY:-}
+      NAMECHEAP_POLLING_INTERVAL: ${NAMECHEAP_POLLING_INTERVAL:-30}
+      NAMECHEAP_PROPAGATION_TIMEOUT: ${NAMECHEAP_PROPAGATION_TIMEOUT:-1800}
+    command:
+      - --accept-tos
+      - --dns
+      - namecheap
+      - --path
+      - /lego
+      - --domains
+      - willow.network
+      - --domains
+      - conference.willow.network
+      - --domains
+      - upload.willow.network
+      - run
+
+  prosody-certs-renew:
+    image: goacme/lego:v4.34.0
+    container_name: prosody-certs-renew
+    profiles:
+      - certs
+    volumes:
+      - ../volumes/prosody/certs:/lego
+    environment:
+      LEGO_EMAIL: ${LEGO_EMAIL:-}
+      NAMECHEAP_API_USER: ${NAMECHEAP_API_USER:-}
+      NAMECHEAP_API_KEY: ${NAMECHEAP_API_KEY:-}
+      NAMECHEAP_POLLING_INTERVAL: ${NAMECHEAP_POLLING_INTERVAL:-30}
+      NAMECHEAP_PROPAGATION_TIMEOUT: ${NAMECHEAP_PROPAGATION_TIMEOUT:-1800}
+    command:
+      - --accept-tos
+      - --dns
+      - namecheap
+      - --path
+      - /lego
+      - --domains
+      - willow.network
+      - --domains
+      - conference.willow.network
+      - --domains
+      - upload.willow.network
+      - renew
+      - --days
+      - "30"

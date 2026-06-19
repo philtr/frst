@@ -144,6 +144,61 @@ services:
 `frst` will automatically include `docker-compose.local.yml` and
 `docker-compose.$(hostname).local.yml` when present.
 
+## 💬 Prosody XMPP
+
+The `boxelder` stack includes a Prosody XMPP server in `apps/prosody.yml`.
+Prosody config is bind-mounted from `volumes/prosody/config/`.
+When HTTP file upload is behind Nginx Proxy Manager, set
+`PROSODY_HTTP_EXTERNAL_URL` to the public upload URL, for example
+`https://upload.willow.network/`, and set `PROSODY_TRUSTED_PROXIES` to the
+Nginx Proxy Manager server IP.
+
+Example local override:
+
+```yaml
+services:
+  prosody:
+    environment:
+      PROSODY_HTTP_EXTERNAL_URL: https://upload.willow.network/
+      PROSODY_TRUSTED_PROXIES: 192.168.1.10
+
+  prosody-certs:
+    environment:
+      LEGO_EMAIL: admin@example.com
+      NAMECHEAP_API_USER: namecheap-user
+      NAMECHEAP_API_KEY: namecheap-api-key
+
+  prosody-certs-renew:
+    environment:
+      LEGO_EMAIL: admin@example.com
+      NAMECHEAP_API_USER: namecheap-user
+      NAMECHEAP_API_KEY: namecheap-api-key
+```
+
+Namecheap DNS-01 certificates are issued with `lego`. Enable Namecheap API
+access, whitelist this server's public IP in Namecheap, then run:
+
+```sh
+docker compose -f docker-compose.boxelder.yml -f docker-compose.boxelder.local.yml --profile certs run --rm prosody-certs
+./frst restart -s boxelder prosody
+```
+
+Renew with:
+
+```sh
+docker compose -f docker-compose.boxelder.yml -f docker-compose.boxelder.local.yml --profile certs run --rm prosody-certs-renew
+./frst restart -s boxelder prosody
+```
+
+Add the renewal command to host cron or a systemd timer. Monthly is enough; the
+renew service only renews when the cert has 30 days or fewer remaining.
+
+After startup, manage users with:
+
+```sh
+docker compose -f docker-compose.boxelder.yml exec prosody prosodyctl adduser user@willow.network
+```
+
 ## 🧠 Philosophy
 
 - One file per app
