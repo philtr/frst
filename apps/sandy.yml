@@ -1,0 +1,26 @@
+services:
+  sandy:
+    container_name: sandy
+    image: ghcr.io/philtr/sandy-server:v2-latest
+    restart: unless-stopped
+    init: true
+    ports:
+      - "8879:80"
+    environment:
+      APP_HOST: sandy.willow.network
+      APP_ORIGIN: https://sandy.willow.network
+      RAILS_ENV: production
+      RAILS_LOG_TO_STDOUT: "true"
+      RAILS_MAX_THREADS: "5"
+      RAILS_SERVE_STATIC_FILES: "true"
+      WEB_CONCURRENCY: "1"
+    volumes:
+      - ../volumes/sandy/storage:/rails/storage
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -H 'Host: sandy.willow.network' http://127.0.0.1/up || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true

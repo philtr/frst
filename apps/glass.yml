@@ -1,0 +1,15 @@
+services:
+  glass:
+    container_name: glass
+    image: ghcr.io/philtr/glass:latest
+    restart: unless-stopped
+    ports:
+      - "7979:7979"
+    volumes:
+      - ../volumes/glass/plans:/plans:ro
+    user: "65532:65532"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

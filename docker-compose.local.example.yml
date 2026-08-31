@@ -71,6 +71,11 @@ services: {}
 #       NAMECHEAP_API_USER: replace_me
 #       NAMECHEAP_API_KEY: replace_me
 #
+#   sandy-server:
+#     environment:
+#       SECRET_KEY_BASE: replace-with-output-from-openssl-rand-hex-64
+#       SETUP_TOKEN: replace-with-output-from-openssl-rand-hex-32
+#
 #   stirling-pdf:
 #     environment:
 #       SECURITY_OAUTH2_CLIENT_GITHUB_CLIENTID: replace_me
