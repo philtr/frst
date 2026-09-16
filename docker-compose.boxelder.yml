@@ -11,6 +11,7 @@ include:
   - apps/home-assistant.yml
   # - apps/homepage.yml
   - apps/linkding.yml
+  - apps/minecraft-bedrock.yml
   - apps/miniminutes.yml
   # - apps/n8n.yml
   - apps/navidrome.yml

@@ -1,0 +1,6 @@
+FROM docker.io/itzg/minecraft-bedrock-server:latest
+
+# Bedrock 1.26 defaults to NetherNet, but the current upstream image does not
+# yet map its transport-specific settings from environment variables.
+RUN jq '. + {"transport":{"env":"TRANSPORT","allowed":["raknet","nethernet"]},"server-udp-ports":{"env":"SERVER_UDP_PORTS"}}' /etc/bds-property-definitions.json > /tmp/bds-property-definitions.json \
+    && mv /tmp/bds-property-definitions.json /etc/bds-property-definitions.json

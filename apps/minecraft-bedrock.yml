@@ -1,0 +1,79 @@
+services:
+  minecraft-bedrock:
+    container_name: minecraft-bedrock
+    build:
+      dockerfile: ./minecraft-bedrock.df
+    environment:
+      EULA: "TRUE"
+      SERVER_NAME: Emberveil
+      LEVEL_NAME: Survival Mode Fun in Emberveil
+      LEVEL_TYPE: DEFAULT
+      GAMEMODE: survival
+      FORCE_GAMEMODE: "false"
+      DIFFICULTY: easy
+      ALLOW_CHEATS: "true"
+      DEFAULT_PLAYER_PERMISSION_LEVEL: member
+      OPS: phi1tr
+      ONLINE_MODE: "true"
+      ALLOW_LIST: "false"
+      ENABLE_LAN_VISIBILITY: "true"
+      TRANSPORT: nethernet
+    ports:
+      - "19132:19132/tcp"
+      - "49152-49200:49152-49200/udp"
+    volumes:
+      - ../volumes/minecraft-bedrock/data:/data
+    post_start:
+      - command:
+          - sh
+          - -ec
+          - |
+            timeout 90s sh -c 'until send-command gamerule showcoordinates true; do sleep 1; done'
+            send-command gamerule keepinventory true
+            send-command gamerule pvp false
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:19132/v1/join >/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      minecraft-bedrock:
+        ipv4_address: 172.30.0.2
+
+  minecraft-bedrock-discovery:
+    container_name: minecraft-bedrock-discovery
+    image: docker.io/firbykirby/udp-broadcast-relay:latest
+    network_mode: host
+    entrypoint: ["/usr/local/bin/udp-broadcast-relay-redux"]
+    command:
+      - --id
+      - "32"
+      - --port
+      - "7551"
+      - --dev
+      - wlx347de44ff877
+      - --dev
+      - br-minecraft
+      - -t
+      - 255.255.255.255
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    depends_on:
+      minecraft-bedrock:
+        condition: service_healthy
+    restart: unless-stopped
+
+networks:
+  minecraft-bedrock:
+    name: frst_minecraft_bedrock
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-minecraft
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
