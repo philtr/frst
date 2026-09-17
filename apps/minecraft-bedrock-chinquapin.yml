@@ -1,0 +1,81 @@
+x-minecraft-common: &minecraft-common
+  build:
+    dockerfile: ./minecraft-bedrock.df
+  environment: &minecraft-environment
+    EULA: "TRUE"
+    VERSION: 1.26.50.5
+    LEVEL_TYPE: DEFAULT
+    ALLOW_CHEATS: "true"
+    DEFAULT_PLAYER_PERMISSION_LEVEL: member
+    OPS: phi1tr
+    ONLINE_MODE: "true"
+    ALLOW_LIST: "false"
+    ENABLE_LAN_VISIBILITY: "true"
+    TRANSPORT: nethernet
+    SERVER_UDP_PORTS: 49152-49200
+  post_start:
+    - command:
+        - sh
+        - -ec
+        - |
+          timeout 90s sh -c 'until send-command gamerule showcoordinates true; do sleep 1; done'
+          send-command gamerule keepinventory true
+          send-command gamerule pvp false
+  stdin_open: true
+  tty: true
+  healthcheck:
+    test: ["CMD-SHELL", "curl --fail --silent http://$${SERVER_IP}:19132/v1/join >/dev/null"]
+    interval: 30s
+    timeout: 5s
+    retries: 3
+    start_period: 30s
+  restart: unless-stopped
+
+services:
+  minecraft-redstone-ridge:
+    <<: *minecraft-common
+    container_name: minecraft-redstone-ridge
+    environment:
+      <<: *minecraft-environment
+      SERVER_NAME: Redstone Ridge
+      SERVER_IP: 192.168.1.242
+      LEVEL_NAME: Redstone Ridge
+      GAMEMODE: survival
+      FORCE_GAMEMODE: "false"
+      DIFFICULTY: easy
+    volumes:
+      - ../volumes/minecraft-redstone-ridge/data:/data
+    networks:
+      chinquapin-lan:
+        ipv4_address: 192.168.1.242
+        mac_address: "02:42:c0:a8:01:f2"
+
+  minecraft-emerald-gulch:
+    <<: *minecraft-common
+    container_name: minecraft-emerald-gulch
+    environment:
+      <<: *minecraft-environment
+      SERVER_NAME: Emerald Gulch
+      SERVER_IP: 192.168.1.243
+      LEVEL_NAME: Emerald Gulch
+      GAMEMODE: creative
+      FORCE_GAMEMODE: "true"
+      DIFFICULTY: peaceful
+    volumes:
+      - ../volumes/minecraft-emerald-gulch/data:/data
+    networks:
+      chinquapin-lan:
+        ipv4_address: 192.168.1.243
+        mac_address: "02:42:c0:a8:01:f3"
+
+networks:
+  chinquapin-lan:
+    name: frst_chinquapin_lan
+    driver: macvlan
+    driver_opts:
+      parent: enp2s0
+      macvlan_mode: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1
