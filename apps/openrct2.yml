@@ -1,0 +1,15 @@
+services:
+  openrct2:
+    image: openrct2/openrct2-cli:latest
+    container_name: openrct2
+    entrypoint:
+      - /bin/sh
+      - /openrct2/start.sh
+    ports:
+      - "11753:11753/tcp"
+    volumes:
+      - ../volumes/openrct2/data:/data
+      - ./openrct2/start.sh:/openrct2/start.sh:ro
+      - ./openrct2/config.ini:/openrct2/config.ini:ro
+      - ./openrct2/groups.json:/openrct2/groups.json:ro
+    restart: unless-stopped

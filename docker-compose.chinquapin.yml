@@ -1,2 +1,3 @@
 include:
   - apps/minecraft-bedrock-chinquapin.yml
+  - apps/openrct2.yml
