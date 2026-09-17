@@ -68,6 +68,27 @@ services:
         ipv4_address: 192.168.1.243
         mac_address: "02:42:c0:a8:01:f3"
 
+  minecraft-spring-lands:
+    <<: *minecraft-common
+    container_name: minecraft-spring-lands
+    environment:
+      <<: *minecraft-environment
+      VERSION: LATEST
+      SERVER_NAME: The Spring Lands
+      SERVER_IP: 192.168.1.244
+      LEVEL_NAME: East Risidore (Creative)
+      GAMEMODE: creative
+      FORCE_GAMEMODE: "true"
+      DIFFICULTY: easy
+      OPS: ""
+    post_start: []
+    volumes:
+      - ../volumes/minecraft-spring-lands/data:/data
+    networks:
+      chinquapin-lan:
+        ipv4_address: 192.168.1.244
+        mac_address: "02:42:c0:a8:01:f4"
+
 networks:
   chinquapin-lan:
     name: frst_chinquapin_lan
